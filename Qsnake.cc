@@ -30,10 +30,16 @@ class Block {
     }
 };
 
+enum Direction { UP, DOWN, LEFT, RIGHT };
+
 struct Snake : public NonBlockingGame {
   long frameTime;
   long nextFrameTime;
-
+	Block *apple;
+	Block *head = nullptr;
+	Block *tail = nullptr;
+	Direction curDir = RIGHT;
+	Direction lastDir = RIGHT;
   // keep an element to represent something the snake would consume to grow,
   // for instance, an apple and keep track of the snake head (both will be elements of
   // type Block
@@ -67,10 +73,45 @@ struct Snake : public NonBlockingGame {
   // update snake position
   void updatePosition() {
 
-    // Move the snake one position, based on its direction and update
+	int newX = head->x;
+	int newY = head->y;
+	switch (curDir) {
+		case RIGHT:
+			newX++;
+			break;
+		case LEFT:
+			newX--;
+			break;
+		case UP:
+			newY++;
+			break;
+		case DOWN:
+			newY--;
+			break;
+	}
+	// Move the snake one position, based on its direction and update
     // the linked list
-
-
+	
+	if (newX < 0) newX = getBoardWidth() - 1;
+	if (newY < 0) newY = getBoardHeight() - 1;
+	if (newX > getBoardWidth()) newX = 0;
+	if (newY > getBoardHeight()) newY = 0;
+	
+	Block *newHead = new Block(newX,newY);
+	newHead->next = head;
+	head = newHead;
+	
+	detectApple();
+	
+	if (!(head->x == apple->x and head->y == apple->y)) { //If the snake doesn't eat the apple, we delete the tail
+		Block *temp = head;
+		while (temp->next != tail) {
+			temp = temp->next;
+		}
+		delete tail;
+		tail = temp;
+		tail->next = nullptr;
+	}
     // handle edge cases - check to make sure the snake
     // doesnt go off the edge of the board; can do a wrap around
     // in X or Y to handle it. Must handle all 4 directions the snake
@@ -85,7 +126,10 @@ struct Snake : public NonBlockingGame {
 
   // check if snake has found the apple
   void detectApple() {
-    // if apple is found, snake consumes it and update the board and plant
+	if (head->x == apple->x and head->y == apple->y) {
+		plantApple();
+	}
+	  // if apple is found, snake consumes it and update the board and plant
     // a new apple on the board.
   }
 
@@ -98,6 +142,20 @@ struct Snake : public NonBlockingGame {
 
   // redraw
   void paint() {
+		
+	  for (int i = 0; i < getBoardHeight; i++) {
+		  for (int j = 0; j < getBoardWidth; j++) {
+				setBGColor(i,j,lightgreen);
+		  }
+	  }
+
+	  drawSymbol(apple->y,apple->x,apple,red);
+	  Block *temp = head;
+	  for (temp) {
+		  setBGColor(temp->y,temp->x,mediumblue);
+		  temp = temp->next;
+	  }
+
 
     // draw the board, the apple and the snake
     // make sure to choose colors so that snake and apple are clearly visible.
