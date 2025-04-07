@@ -11,6 +11,7 @@
 //  and the player has lost. 3. The object of the game is to make the snake as big as possible.
 //
 using namespace bridges::game;
+using namespace bridges::game::NamedColor;
 using namespace std;
 
 // this keeps a list of elements (squares) that represents the snake object
@@ -134,7 +135,7 @@ struct Snake : public NonBlockingGame {
 	bool yn = false;
         int x, y;
 
-        while (!valid){
+        while (!yn){
             x = rand() % (getBoardWidth() - 1);
             y = rand() % (getBoardWidth() - 1);
             yn = true;
@@ -152,7 +153,7 @@ struct Snake : public NonBlockingGame {
         if (apple == nullptr) apple = new Block(x, y);
         else{
             apple->x = x;
-            apply->y = y;
+            apple->y = y;
         }
 
   }
@@ -184,8 +185,8 @@ struct Snake : public NonBlockingGame {
   // redraw
   void paint() {
 
-	   for (int i = 0; i < getBoardHeight; i++) {
-		  for (int j = 0; j < getBoardWidth; j++) {
+	   for (int i = 0; i < getBoardHeight(); i++) {
+		  for (int j = 0; j < getBoardWidth(); j++) {
 				setBGColor(i,j,lightgreen);
 		  }
 	  }
