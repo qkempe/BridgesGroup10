@@ -37,6 +37,7 @@ struct Snake : public NonBlockingGame {
 	Block *apple;
 	Block *head = nullptr;
 	Block *tail = nullptr;
+	Block *next = nullptr;
 	Direction curDir = RIGHT;
 	Direction lastDir = RIGHT;
 
@@ -68,6 +69,12 @@ struct Snake : public NonBlockingGame {
 
   void handleInput() {
     // Use the 4 arrow keys to move the snake in a particular direction
+      if(keyUp() and lastDir != DOWN) curDir = UP;
+      else if(keyDown() and lastDir != UP) curDir = DOWN;
+      else if(keyLeft() and lastDir != RIGHT) curDir = LEFT;
+      else if(keyRight() and lastDir != LEFT) curDir = RIGHT;
+
+      lastDir = curDir;
   }
 
   // update snake position
@@ -123,6 +130,31 @@ struct Snake : public NonBlockingGame {
   void plantApple() {
     // randomly position the apple, taking care to ensure that it doesnt
     // intersect with the snake position.
+  
+	bool yn = false;
+        int x, y;
+
+        while (!valid){
+            x = rand() % (getBoardWidth() - 1);
+            y = rand() % (getBoardWidth() - 1);
+            yn = true;
+
+            Block *curNode = head;
+            while(curNode != nullptr){
+                if (curNode->x == x and curNode->y == y){
+                    yn = false;
+                    break;
+                }
+                curNode = curNode->next;
+            }
+        }
+
+        if (apple == nullptr) apple = new Block(x, y);
+        else{
+            apple->x = x;
+            apply->y = y;
+        }
+
   }
 
   // check if snake has found the apple
@@ -138,7 +170,14 @@ struct Snake : public NonBlockingGame {
 
   // check if snake ate itself! Yuk!
   void detectDeath() {
-
+	Block* curNode = head->next;
+        while (curNode != nullptr){
+            if (curNode->x == head->x and curNode->y == head->y){
+                quit();
+                return;
+            }
+            curNode = curNode->next;
+        }
   }
 
 
