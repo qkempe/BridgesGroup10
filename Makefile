@@ -1,5 +1,5 @@
 SRCS = Snake.cpp
-EXE=Snake
+EXE=a.out
 
 
 # Everything below that should not have to change ever.
@@ -20,7 +20,7 @@ LIBS =  -lcurl -l bridges
 $(EXE): $(OBJS)
 	$(CXX) -o $(EXE) $(OBJS) $(LDFLAGS) $(LIBS)
 
-.SUFFIXES: .cpp
+.SUFFIXES: .cpp .cc
 
 .cpp.o:  
 	$(CXX) $(CXXFLAGS) -c $< -o $@
