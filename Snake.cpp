@@ -29,6 +29,7 @@ class Block {
       this->x = x;
       this->y = y;
     }
+
 };
 enum Direction { UP, DOWN, LEFT, RIGHT };
 
@@ -52,6 +53,22 @@ struct Snake : public NonBlockingGame {
 
   int frame = 0;
 
+      ~Snake() {
+        // Free the snake's linked list
+        Block* current = head;
+        while (current != nullptr) {
+            Block* nextBlock = current->next;
+            delete current;
+            current = nextBlock;
+        }
+
+        // Free the apple
+        if (apple != nullptr) {
+            delete apple;
+            apple = nullptr;
+        }
+    }
+
   // create the game grid
   Snake(int assID, std::string username, std::string apikey)
     : NonBlockingGame (0, username, apikey, 30, 30) {
@@ -63,15 +80,23 @@ struct Snake : public NonBlockingGame {
   	setDescription("Snake: Eat the food, not yourself! Use the arrow keys to move.");
 
     // create the snake of some number of elements,
-    // perform all initializations, place the apple
+	// perform all initializations, place the apple
 
-    paint();
+	int initX = (getBoardWidth() - 1) / 2;
+	int initY = (getBoardHeight() - 1) / 2;
+	head = new Block(initX, initY);
+	tail = head;
+
+	plantApple();
+
+	paint();
+
   }
 
   void handleInput() {
     // Use the 4 arrow keys to move the snake in a particular direction
-      if(keyUp() and lastDir != DOWN) curDir = UP;
-      else if(keyDown() and lastDir != UP) curDir = DOWN;
+      if(keyUp() and lastDir != DOWN) curDir = DOWN;
+      else if(keyDown() and lastDir != UP) curDir = UP;
       else if(keyLeft() and lastDir != RIGHT) curDir = LEFT;
       else if(keyRight() and lastDir != LEFT) curDir = RIGHT;
 
@@ -184,16 +209,15 @@ struct Snake : public NonBlockingGame {
 
   // redraw
   void paint() {
-	
-	   for (int i = 0; i < getBoardHeight(); i++) {
-		  for (int j = 0; j < getBoardWidth(); j++) {
+	   for (int i = 0; i < (getBoardHeight() ); i++) {
+		  for (int j = 0; j < (getBoardWidth() ); j++) {
 				setBGColor(i,j,NamedColor::lightgreen);
 		  }
 	  }
 	  drawSymbol(apple->y,apple->x,NamedSymbol::apple,NamedColor::red);
 	  Block *temp = head;
 	  while (temp) {
-		  setBGColor(temp->y,temp->x,NamedColor::mediumblue);
+		  setBGColor(temp->y, temp->x, NamedColor::mediumblue);
 		  temp = temp->next;
 	  }
 
@@ -208,12 +232,13 @@ struct Snake : public NonBlockingGame {
   // and perform updates every n frames or so.
   virtual void gameLoop() override {
   }
+  
 };
 
 // Initialize your game
 // Call your game class with your assignment id, username, and api key
 int main (int argc, char** argv) {
-  Snake g(122, "BRIDGES_USER_ID", "BRIDGES_API_KEY");
+  Snake g(1, "Geebo", "1184274273581");
   
   
   g.start();

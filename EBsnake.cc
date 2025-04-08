@@ -1,4 +1,4 @@
-#include <NonBlockingGame.h> 
+#include <NonBlockingGame.h>
 #include <iostream>
 #include <time.h>
 #include <vector>
@@ -11,6 +11,7 @@
 //  and the player has lost. 3. The object of the game is to make the snake as big as possible.
 //
 using namespace bridges::game;
+//using namespace bridges::game::NamedColor;
 using namespace std;
 
 // this keeps a list of elements (squares) that represents the snake object
@@ -28,6 +29,7 @@ class Block {
       this->x = x;
       this->y = y;
     }
+
 };
 enum Direction { UP, DOWN, LEFT, RIGHT };
 
@@ -37,7 +39,7 @@ struct Snake : public NonBlockingGame {
     Block *apple;
     Block *head = nullptr;
     Block *tail = nullptr;
-	Block *next = nullptr;
+    Block *next = nullptr;
     Direction curDir = RIGHT;
     Direction lastDir = RIGHT;
 
@@ -50,6 +52,22 @@ struct Snake : public NonBlockingGame {
   // and current direction
 
   int frame = 0;
+
+      ~Snake() {
+        // Free the snake's linked list
+        Block* current = head;
+        while (current != nullptr) {
+            Block* nextBlock = current->next;
+            delete current;
+            current = nextBlock;
+        }
+
+        // Free the apple
+        if (apple != nullptr) {
+            delete apple;
+            apple = nullptr;
+        }
+    }
 
   // create the game grid
   Snake(int assID, std::string username, std::string apikey)
@@ -64,17 +82,25 @@ struct Snake : public NonBlockingGame {
     // create the snake of some number of elements,
     // perform all initializations, place the apple
 
+    int initX = (getBoardWidth() - 1) / 2;
+    int initY = (getBoardHeight() - 1) / 2;
+    head = new Block(initX, initY);
+    tail = head;
+
+    plantApple();
+
     paint();
+
   }
 
   void handleInput() {
     // Use the 4 arrow keys to move the snake in a particular direction
-	  if(keyUp() and lastDir != DOWN) curDir = UP;
-	  else if(keyDown() and lastDir != UP) curDir = DOWN;
-	  else if(keyLeft() and lastDir != RIGHT) curDir = LEFT;
-	  else if(keyRight() and lastDir != LEFT) curDir = RIGHT;
+      if(keyUp() and lastDir != DOWN) curDir = DOWN;
+      else if(keyDown() and lastDir != UP) curDir = UP;
+      else if(keyLeft() and lastDir != RIGHT) curDir = LEFT;
+      else if(keyRight() and lastDir != LEFT) curDir = RIGHT;
 
-	  lastDir = curDir;
+      lastDir = curDir;
   }
 
   // update snake position
@@ -95,8 +121,11 @@ struct Snake : public NonBlockingGame {
         case DOWN:
             newY--;
             break;
-    }
-    // Move the snake one position, based on its direction and update
+    }  
+
+
+
+// Move the snake one position, based on its direction and update
     // the linked list
 
     if (newX < 0) newX = getBoardWidth() - 1;
@@ -131,29 +160,29 @@ struct Snake : public NonBlockingGame {
     // randomly position the apple, taking care to ensure that it doesnt
     // intersect with the snake position.
 
-		bool yn = false;
-		int x, y;
+    bool yn = false;
+        int x, y;
 
-		while (!valid){
-			x = rand() % (getBoardWidth() - 1);
-			y = rand() % (getBoardWidth() - 1);
-			yn = true;
+        while (!yn){
+            x = rand() % (getBoardWidth() - 1);
+            y = rand() % (getBoardWidth() - 1);
+            yn = true;
 
-			Block *curNode = head;
-			while(curNode != nullptr){
-				if (curNode->x == x and curNode->y == y){
-					yn = false;
-					break;
-				}
-				curNode = curNode->next;
-			}
-		}
+            Block *curNode = head;
+            while(curNode != nullptr){
+                if (curNode->x == x and curNode->y == y){
+                    yn = false;
+                    break;
+                }
+                curNode = curNode->next;
+            }
+        }
 
-		if (apple == nullptr) apple = new Block(x, y);
-		else{
-			apple->x = x;
-			apply->y = y;
-		}
+        if (apple == nullptr) apple = new Block(x, y);
+        else{
+            apple->x = x;
+            apple->y = y;
+        }
 
   }
 
@@ -170,30 +199,28 @@ struct Snake : public NonBlockingGame {
 
   // check if snake ate itself! Yuk!
   void detectDeath() {
-		Block* curNode = head->next;
-		while (curNode != nullptr){
-			if (curNode->x == head->x and curNode->y == head->y){
-				quit();
-				return;
-			}
-			curNode = curNode->next;
-		}
-  }	
+    Block* curNode = head->next;
+        while (curNode != nullptr){
+            if (curNode->x == head->x and curNode->y == head->y){
+                quit();
+                return;
+            }
+            curNode = curNode->next;
+        }
+  }
 
 
   // redraw
   void paint() {
-
-       for (int i = 0; i < getBoardHeight; i++) {
-          for (int j = 0; j < getBoardWidth; j++) {
-                setBGColor(i,j,lightgreen);
+       for (int i = 0; i < (getBoardHeight() ); i++) {
+          for (int j = 0; j < (getBoardWidth() ); j++) {
+                setBGColor(i,j,NamedColor::lightgreen);
           }
       }
-
-      drawSymbol(apple->y,apple->x,apple,red);
+      drawSymbol(apple->y,apple->x,NamedSymbol::apple,NamedColor::red);
       Block *temp = head;
-      for (temp) {
-          setBGColor(temp->y,temp->x,mediumblue);
+      while (temp) {
+          setBGColor(temp->y, temp->x, NamedColor::mediumblue);
           temp = temp->next;
       }
 
@@ -207,14 +234,24 @@ struct Snake : public NonBlockingGame {
   // keep the frame counter
   // and perform updates every n frames or so.
   virtual void gameLoop() override {
+      handleInput();
+      if (frame %5 == 0){
+          updatePosition();
+          detectDeath();
+      }
+      paint();
+      frame++;
+
   }
 };
 
 // Initialize your game
 // Call your game class with your assignment id, username, and api key
 int main (int argc, char** argv) {
-  Snake g(122, "BRIDGES_USER_ID", "BRIDGES_API_KEY");
+  Snake g(1, "Geebo", "1184274273581");
 
 
   g.start();
-}1,1           All
+}
+
+      
