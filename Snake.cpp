@@ -232,15 +232,15 @@ struct Snake : public NonBlockingGame {
   // keep the frame counter
   // and perform updates every n frames or so.
   virtual void gameLoop() override {
-		x
-	  while (true) {
-			handleInput();
+		
+	  handleInput();
+	  if (frame % 10 == 0) {
 			updatePosition();
 			detectDeath();
-			paint();
-			frame += 1;
 	  }
-
+	
+	  paint();
+	  frame++;
   }
   
 };
@@ -253,5 +253,7 @@ int main (int argc, char** argv) {
   Snake q(1, "qkempe", "612609502865");
   
   g.start();
+
+  q.start();
 }
 
