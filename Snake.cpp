@@ -255,12 +255,16 @@ struct Snake : public NonBlockingGame {
 // Initialize your game
 // Call your game class with your assignment id, username, and api key
 int main (int argc, char** argv) {
-  Snake g(1, "Geebo", "1184274273581");
- 
-  Snake q(1, "qkempe", "612609502865");
-  
-  g.start();
-
-  q.start();
+  string user;
+  cout << "Enter your user (Geebo or qkempe)" << endl;
+  cin >> user;
+  if (user == "Geebo") {
+	Snake g(1, "Geebo", "1184274273581");
+  	g.start();
+  }
+  else if (user == "qkempe") {
+    Snake q(1, "qkempe", "612609502865");
+    q.start();
+  }
 }
 
