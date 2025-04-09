@@ -133,18 +133,22 @@ struct Snake : public NonBlockingGame {
 	Block *newHead = new Block(newX,newY);
 	newHead->next = head;
 	head = newHead;
-	
- 	detectApple();
 
-	if (!(head->x == apple->x and head->y == apple->y)) { //If the snake doesn't eat the apple, we delete the tail
-		Block *temp = head;
-		while (temp->next != tail) {
-			temp = temp->next;
-		}
-		delete tail;
-		tail = temp;
-		tail->next = nullptr;
-	}
+
+	if (head->x == apple->x && head->y == apple->y) {
+    delete apple;
+    apple = nullptr;
+    plantApple();
+} else {
+    Block *temp = head;
+    while (temp->next != tail) {
+        temp = temp->next;
+    }
+    delete tail;
+    tail = temp;
+    tail->next = nullptr;
+}
+
 
 	lastDir = curDir;
     // handle edge cases - check to make sure the snake
@@ -189,6 +193,8 @@ struct Snake : public NonBlockingGame {
 
 	 if (head->x == apple->x and head->y == apple->y) {
 		 setBGColor(apple->x,apple->y,NamedColor::lightgreen);
+		 delete apple;
+		 apple = nullptr;
 		 plantApple();
 	}
     // if apple is found, snake consumes it and update the board and plant
