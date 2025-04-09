@@ -193,6 +193,7 @@ struct Snake : public NonBlockingGame {
 
 	 if (head->x == apple->x and head->y == apple->y) {
 		 setBGColor(apple->x,apple->y,NamedColor::lightgreen);
+		 drawSymbol(apple->x,apple->y,NamedSymbol::none,NamedColor::lightgreen);
 		 delete apple;
 		 apple = nullptr;
 		 plantApple();
