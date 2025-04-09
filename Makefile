@@ -12,13 +12,13 @@ TARGET =  all
 
 OBJS = $(SRCS:.cpp=.o)
 
-CXXFLAGS = -g  -std=c++14 -Wall -Wextra -fsanitize=address $(BRIDGES_CXXFLAGS)
+CXXFLAGS = -g  -std=c++14 -Wall -Wextra -fsanitize=address
 
-LDFLAGS = -g $(BRIDGES_LDFLAGS) -pthread
+LDFLAGS = -g -pthread
 LIBS =  -lcurl -l bridges 
 
 $(EXE): $(OBJS)
-	$(CXX) -o $(EXE) $(OBJS) $(LDFLAGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS) $(LDFLAGS) $(LIBS)
 
 .SUFFIXES: .cpp .cc
 
