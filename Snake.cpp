@@ -134,8 +134,8 @@ struct Snake : public NonBlockingGame {
 	newHead->next = head;
 	head = newHead;
 	
-	detectApple();
-	
+ 	detectApple();
+
 	if (!(head->x == apple->x and head->y == apple->y)) { //If the snake doesn't eat the apple, we delete the tail
 		Block *temp = head;
 		while (temp->next != tail) {
@@ -145,7 +145,8 @@ struct Snake : public NonBlockingGame {
 		tail = temp;
 		tail->next = nullptr;
 	}
- 
+
+	lastDir = curDir;
     // handle edge cases - check to make sure the snake
     // doesnt go off the edge of the board; can do a wrap around
     // in X or Y to handle it. Must handle all 4 directions the snake
