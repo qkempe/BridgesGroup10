@@ -187,7 +187,7 @@ struct Snake : public NonBlockingGame {
   void detectApple() {
 
 	 if (head->x == apple->x and head->y == apple->y) {
-		 delete apple;
+		 setBGColor(apple->x,apple->y,NamedColor::lightgreen);
 		 plantApple();
 	}
     // if apple is found, snake consumes it and update the board and plant
